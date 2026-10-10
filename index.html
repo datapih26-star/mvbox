@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MovieBox - Professional Streaming Platform</title>
+  <meta name="description" content="Watch trending movies, exclusive TV shows, anime, and dramas in ultra HD with zero buffering." />
+  <meta property="og:title" content="MovieBox - Professional Streaming Platform" />
+  <meta property="og:description" content="Stream thousands of movies, TV dramas, and blockbuster premieres online." />
+  <meta property="og:type" content="website" />
+  
+  <!-- ==================== CDN ASSETS (Tailwind CSS & Lucide Icons) ==================== -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Tailwind Configuration (Dark Mode & Palette Korporat) -->
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              DEFAULT: '#00dc82',
+              cyan: '#06b6d4',
+              accent: '#38bdf8',
+              hover: '#059669'
+            },
+            dark: {
+              base: '#0b0b0e',
+              surface: '#121218',
+              card: '#1a1a24',
+              border: '#262636',
+              hover: '#252538'
+            },
+            light: {
+              base: '#f8fafc',
+              surface: '#ffffff',
+              card: '#f1f5f9',
+              border: '#e2e8f0',
+              hover: '#e2e8f0'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    /* Custom Modern Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Glow Effects & Card Animations */
+    .glow-cyan {
+      box-shadow: 0 0 25px -5px rgba(6, 182, 212, 0.4);
+    }
+    .card-zoom {
+      transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-zoom:hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+  </style>
+</head>
+<body class="bg-[#0b0b0e] text-slate-100 font-sans min-h-screen transition-colors duration-300 selection:bg-cyan-500 selection:text-white" id="appBody">
+
+  <!-- ========================================================
+       KONFIGURASI IKLAN & MONETISASI (WAJIB DITERAPKAN)
+       ======================================================== -->
+  <script>
+    // Konfigurasi Link Iklan & Sponsor sesuai instruksi:
+    const DIRECT_LINK = "https://uplcm.com/4/11992218";
+    const BANNER_KOTAK = "https://uplcm.com/4/11995184";
+    const BANNER_HORIZONTAL = "https://uplcm.com/4/11992218";
+  </script>
+
+  <!-- ==================== TOP NAVIGATION BAR ==================== -->
+  <header class="sticky top-0 z-40 w-full bg-[#121218]/90 dark:bg-[#121218]/90 backdrop-blur-md border-b border-[#262636] transition-colors duration-300">
+    <div class="max-w-[1920px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Mobile Toggle -->
+      <div class="flex items-center gap-4 min-w-[200px]">
+        <button id="sidebarToggleBtn" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors focus:outline-none" title="Toggle Sidebar">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        
+        <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:scale-105 transition-transform">
+            <svg class="w-5 h-5 text-black fill-current translate-x-0.5" viewBox="0 0 24 24">
+              <path d="M5 3l14 9-14 9V3z"/>
+            </svg>
+          </div>
+          <span class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-300 bg-clip-text text-transparent">Movie<span class="text-cyan-400">Box</span></span>
+        </a>
+      </div>
+
+      <!-- Live Search Bar (Live Filtering) -->
+      <div class="flex-1 max-w-2xl relative">
+        <div class="relative flex items-center">
+          <i data-lucide="search" class="w-5 h-5 absolute left-3.5 text-slate-400 pointer-events-none"></i>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search movies/ TV Shows (Live filter)..." 
+            class="w-full pl-11 pr-10 py-2 rounded-xl bg-[#1a1a24] text-slate-100 placeholder-slate-400 border border-[#2e2e42] focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/20 text-sm transition-all outline-none"
+            autocomplete="off"
+          />
+          <button id="clearSearchBtn" class="absolute right-3 text-slate-400 hover:text-white hidden" title="Clear Search">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Action Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Go Premium Badge Button -->
+        <a href="javascript:void(0)" onclick="handleAdClick(event, 'Go Premium')" class="hidden md:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 font-medium text-xs transition-all">
+          <i data-lucide="crown" class="w-3.5 h-3.5 text-amber-400"></i>
+          <span>Go Premium</span>
+        </a>
+
+        <!-- MovieBox GPT Feature -->
+        <a href="javascript:void(0)" onclick="handleAdClick(event, 'MovieBox GPT')" class="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 font-medium text-xs transition-all">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span>MovieBox GPT</span>
+        </a>
+
+        <!-- Download App Button -->
+        <button onclick="handleAdClick(event, 'Download App')" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 text-emerald-300 text-xs font-medium transition-colors">
+          <i data-lucide="arrow-down-to-line" class="w-3.5 h-3.5"></i>
+          <span>Download App</span>
+        </button>
+
+        <!-- Night / Light Mode Toggle Button -->
+        <button id="themeToggleBtn" class="p-2 rounded-xl bg-[#1a1a24] border border-[#2e2e42] text-slate-300 hover:text-white hover:border-cyan-400 transition-all flex items-center justify-center" title="Toggle Night/Light Mode">
+          <i data-lucide="moon" id="themeIcon" class="w-4 h-4 text-cyan-400"></i>
+          <span class="sr-only">Toggle Theme</span>
+        </button>
+
+        <!-- Notification Bell -->
+        <div class="relative">
+          <button id="notifBellBtn" class="p-2 rounded-xl bg-[#1a1a24] border border-[#2e2e42] text-slate-300 hover:text-white hover:border-cyan-400 transition-all relative" title="Notifications">
+            <i data-lucide="bell" class="w-4 h-4"></i>
+            <span class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></span>
+          </button>
+          
+          <!-- Notification Dropdown -->
+          <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 bg-[#161622] border border-[#2e2e42] rounded-2xl shadow-2xl p-4 z-50">
+            <div class="flex items-center justify-between pb-3 border-b border-[#2e2e42]">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300">Notifications</h4>
+              <span class="text-[10px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-full font-semibold">2 New</span>
+            </div>
+            <div class="space-y-3 mt-3">
+              <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer" onclick="handleAdClick(event, 'Notification 1')">
+                <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="film" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-slate-200">New Episode: Take Charge of My Heart Ep 12</p>
+                  <p class="text-[10px] text-slate-400">Premiered 15 minutes ago</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer" onclick="handleAdClick(event, 'Notification 2')">
+                <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
+                  <i data-lucide="tv" class="w-4 h-4"></i>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold text-slate-200">Black Clover Season 2 Finale is live!</p>
+                  <p class="text-[10px] text-slate-400">Available in 4K Ultra HD</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log in Button -->
+        <button onclick="handleLoginClick()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#262638] hover:bg-[#32324a] text-slate-200 text-xs font-medium transition-colors border border-white/5">
+          <i data-lucide="user" class="w-3.5 h-3.5"></i>
+          <span id="userStatusText">Log in</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== MAIN APPLICATION CONTAINER ==================== -->
+  <div class="max-w-[1920px] mx-auto flex min-h-[calc(100vh-64px)] relative">
+    
+    <!-- ==================== LEFT SIDEBAR ==================== -->
+    <aside id="sidebar" class="w-64 shrink-0 bg-[#0f0f15] border-r border-[#262636] p-4 flex flex-col justify-between transition-all duration-300 z-30 fixed inset-y-16 left-0 md:static md:translate-x-0 -translate-x-full">
+      <div class="space-y-6 overflow-y-auto pr-1">
+        
+        <!-- Language Selector -->
+        <div class="relative">
+          <button id="langSelectBtn" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#161622] border border-[#2e2e42] text-xs text-slate-300 hover:text-white transition-colors">
+            <span class="flex items-center gap-2">
+              <i data-lucide="globe" class="w-4 h-4 text-cyan-400"></i>
+              <span id="currentLangLabel">ENGLISH</span>
+            </span>
+            <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+
+        <!-- Primary Navigation (Home, TV show, Movie, Midnight, Animation, Most Watched) -->
+        <div class="space-y-1">
+          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">Browse</p>
+          
+          <button onclick="navigateTo('home')" class="nav-item active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="home">
+            <i data-lucide="home" class="w-4 h-4 text-cyan-400"></i>
+            <span>Home</span>
+          </button>
+
+          <button onclick="navigateTo('tv_show')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="tv_show">
+            <i data-lucide="tv" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>TV show</span>
+          </button>
+
+          <button onclick="navigateTo('movie')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="movie">
+            <i data-lucide="film" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Movie</span>
+          </button>
+
+          <button onclick="navigateTo('midnight')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="midnight">
+            <i data-lucide="flame" class="w-4 h-4 text-rose-500"></i>
+            <span>Midnight</span>
+          </button>
+
+          <button onclick="navigateTo('animation')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="animation">
+            <i data-lucide="clapperboard" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Animation</span>
+          </button>
+
+          <button onclick="navigateTo('most_watched')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="most_watched">
+            <i data-lucide="trending-up" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Most Watched</span>
+          </button>
+        </div>
+
+        <!-- Secondary Navigation (Watch List, Coming Soon, Discovery, Friends, Parties, Media, Setting) -->
+        <div class="space-y-1 pt-2 border-t border-[#262636]">
+          <p class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2">My Cinema</p>
+
+          <button onclick="navigateTo('watchlist')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="watchlist">
+            <i data-lucide="bookmark" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Watch List</span>
+            <span id="watchlistBadgeCount" class="ml-auto text-[10px] bg-cyan-500/20 text-cyan-300 font-bold px-2 py-0.5 rounded-full">3</span>
+          </button>
+
+          <button onclick="navigateTo('coming_soon')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="coming_soon">
+            <i data-lucide="calendar" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Coming Soon</span>
+          </button>
+
+          <button onclick="navigateTo('discovery')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="discovery">
+            <i data-lucide="compass" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Discovery</span>
+          </button>
+
+          <button onclick="navigateTo('friends')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="friends">
+            <i data-lucide="users" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Friends</span>
+          </button>
+
+          <button onclick="navigateTo('parties')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="parties">
+            <i data-lucide="popcorn" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Parties</span>
+          </button>
+
+          <button onclick="navigateTo('media')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="media">
+            <i data-lucide="hard-drive" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Media</span>
+          </button>
+
+          <button onclick="navigateTo('setting')" class="nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-[#1a1a24] transition-all group" data-page="setting">
+            <i data-lucide="settings" class="w-4 h-4 group-hover:text-cyan-400"></i>
+            <span>Setting</span>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- App Download Section (Persis seperti pada referensi MovieBox) -->
+      <div class="mt-4 pt-4 border-t border-[#262636] space-y-2">
+        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Get MovieBox</p>
+        
+        <div onclick="handleAdClick(event, 'Download Mobile App')" class="cursor-pointer p-2.5 rounded-xl bg-gradient-to-r from-cyan-950/60 to-emerald-950/50 border border-cyan-500/30 flex items-center justify-between hover:border-cyan-400 transition-all">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-lg bg-cyan-400 text-black flex items-center justify-center font-bold">
+              <i data-lucide="smartphone" class="w-4 h-4"></i>
+            </div>
+            <div>
+              <p class="text-xs font-bold text-white">MovieBox App</p>
+              <p class="text-[9px] text-slate-400">For mobile & desktop</p>
+            </div>
+          </div>
+          <i data-lucide="qr-code" class="w-4 h-4 text-cyan-400"></i>
+        </div>
+
+        <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+          <button onclick="handleAdClick(event, 'Mac DMG Download')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#161622] border border-[#262636] text-slate-400 hover:text-white hover:border-cyan-400/50 transition-all">
+            <i data-lucide="apple" class="w-3.5 h-3.5"></i>
+            <span class="truncate">Mac DMG</span>
+          </button>
+          <button onclick="handleAdClick(event, 'Windows EXE Download')" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#161622] border border-[#262636] text-slate-400 hover:text-white hover:border-cyan-400/50 transition-all">
+            <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+            <span class="truncate">Windows EXE</span>
+          </button>
+          <button onclick="handleAdClick(event, 'TV APK Download')" class="col-span-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#161622] border border-[#262636] text-slate-400 hover:text-white hover:border-cyan-400/50 transition-all">
+            <i data-lucide="tv-2" class="w-3.5 h-3.5"></i>
+            <span>TV APK (Android TV)</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Backdrop for mobile sidebar -->
+    <div id="sidebarBackdrop" class="fixed inset-0 bg-black/60 z-20 hidden md:hidden"></div>
+
+    <!-- ==================== MAIN CONTENT VIEWPORT ==================== -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto overflow-hidden">
+      
+      <!-- Live Search Filter Indicator Header -->
+      <div id="searchFilterHeader" class="hidden mb-6 flex items-center justify-between bg-cyan-950/40 border border-cyan-500/30 p-4 rounded-2xl">
+        <div class="flex items-center gap-3">
+          <i data-lucide="search" class="w-5 h-5 text-cyan-400"></i>
+          <div>
+            <h3 class="text-sm font-semibold text-white">Search Results for: "<span id="searchQueryLabel" class="text-cyan-400"></span>"</h3>
+            <p id="searchCountLabel" class="text-xs text-slate-400">Found 0 matching titles</p>
+          </div>
+        </div>
+        <button onclick="resetSearch()" class="px-3 py-1 rounded-lg bg-white/10 hover:bg-white/20 text-xs text-slate-200 transition-colors">
+          Reset Filter
+        </button>
+      </div>
+
+      <!-- DYNAMIC CONTENT CONTAINER -->
+      <div id="mainContentContainer">
+
+        <!-- ==================== 1. HERO / FEATURED BANNER SECTION ==================== -->
+        <section id="heroSection" class="relative rounded-3xl overflow-hidden bg-gradient-to-t from-[#0b0b0e] via-[#121218]/80 to-[#1e1e2d] border border-[#262636] shadow-2xl mb-8">
+          
+          <!-- Hero Background Backdrop with Film Still -->
+          <div class="relative w-full h-[360px] sm:h-[440px] md:h-[480px]">
+            <img 
+              id="heroImage" 
+              src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=80" 
+              alt="Take Charge of My Heart Banner" 
+              class="w-full h-full object-cover object-center brightness-75 transition-all duration-700"
+            />
+            
+            <!-- Vignette Gradients -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0b0b0e] via-[#0b0b0e]/60 to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-r from-[#0b0b0e] via-[#0b0b0e]/80 to-transparent"></div>
+
+            <!-- Hero Info Overlay -->
+            <div class="absolute bottom-6 sm:bottom-10 left-6 sm:left-10 max-w-xl space-y-3 z-10">
+              
+              <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-md bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 text-[10px] font-bold uppercase tracking-wider">Featured Premiere</span>
+                <span class="flex items-center gap-1 text-[11px] text-amber-400 font-semibold bg-amber-500/10 px-2 py-0.5 rounded">
+                  <i data-lucide="star" class="w-3 h-3 fill-amber-400"></i> 9.4
+                </span>
+                <span class="text-xs text-slate-400">| 2026 | Comedy, Fantasy, Romance</span>
+              </div>
+
+              <h1 id="heroTitle" class="text-2xl sm:text-4xl md:text-5xl font-black text-white tracking-tight leading-tight">
+                Take Charge of My Heart
+              </h1>
+
+              <p id="heroDescription" class="text-xs sm:text-sm text-slate-300 line-clamp-2 md:line-clamp-3 leading-relaxed">
+                When a high-powered tech prodigy accidentally syncs her neural bio-tracker with a spirited cafe musician, their emotions become intertwined across Seoul. Every heartbeat sparks electric destiny.
+              </p>
+
+              <!-- Hero Dual Function Buttons: Buka Modal Video + Buka DIRECT_LINK -->
+              <div class="flex flex-wrap items-center gap-3 pt-2">
+                <button 
+                  onclick="handlePlayMovie({
+                    title: 'Take Charge of My Heart', 
+                    year: '2026', 
+                    genre: 'Comedy, Fantasy, Romance', 
+                    rating: '9.4',
+                    duration: 'Season 1 • 16 Episodes',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+                    poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80',
+                    desc: 'When a high-powered tech prodigy accidentally syncs her neural bio-tracker with a spirited cafe musician, their emotions become intertwined across Seoul.'
+                  })"
+                  class="watch-btn px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-400 hover:from-cyan-400 hover:to-emerald-300 text-black font-bold text-sm flex items-center gap-2 shadow-lg shadow-cyan-500/25 active:scale-95 transition-all"
+                >
+                  <i data-lucide="play" class="w-4 h-4 fill-black"></i>
+                  <span>Watch Now</span>
+                </button>
+
+                <button 
+                  onclick="toggleWatchlist('Take Charge of My Heart')"
+                  class="px-5 py-2.5 rounded-xl bg-[#1f1f2e]/80 hover:bg-[#2b2b40] text-slate-200 border border-white/10 text-sm font-semibold flex items-center gap-2 transition-all"
+                >
+                  <i data-lucide="plus" class="w-4 h-4"></i>
+                  <span>Add to Watchlist</span>
+                </button>
+
+                <button 
+                  onclick="showToast('Available in 4K HDR Dolby Atmos 7.1')"
+                  class="px-3.5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white border border-white/5 text-sm transition-all"
+                  title="Stream Info"
+                >
+                  <i data-lucide="info" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Carousel Pagination Dots (Sesuai Referensi MovieBox) -->
+            <div class="absolute bottom-6 right-6 sm:right-10 flex items-center gap-1.5 z-10">
+              <span class="w-6 h-1.5 rounded-full bg-cyan-400"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-500 cursor-pointer" onclick="switchHero(1)"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-500 cursor-pointer" onclick="switchHero(2)"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-500 cursor-pointer" onclick="switchHero(3)"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-slate-500 cursor-pointer" onclick="switchHero(4)"></span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 2. SECTION: TRENDING DRAMA 🔥 ==================== -->
+        <section class="mb-10">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                Trending Drama <span class="text-xl">🔥</span>
+              </h2>
+              <span class="text-xs text-slate-400 hidden sm:inline">• Top picked for you</span>
+            </div>
+            <a href="javascript:void(0)" onclick="navigateTo('tv_show')" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 group">
+              <span>More</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+
+          <!-- Horizontal Scrollable Poster Cards -->
+          <div class="relative group/rail">
+            <button onclick="scrollRail('trendingDramaRail', -400)" class="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-[#161622]/90 border border-white/10 text-white flex items-center justify-center shadow-xl opacity-0 group-hover/rail:opacity-100 transition-opacity">
+              <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </button>
+
+            <div id="trendingDramaRail" class="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar scroll-smooth">
+              <!-- Injected by JavaScript -->
+            </div>
+
+            <button onclick="scrollRail('trendingDramaRail', 400)" class="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-[#161622]/90 border border-white/10 text-white flex items-center justify-center shadow-xl opacity-0 group-hover/rail:opacity-100 transition-opacity">
+              <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- ==================== 3. SECTION: TRENDING MOVIES 🎬 ==================== -->
+        <section class="mb-10">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                Trending Movies <span class="text-cyan-400">🎬</span>
+              </h2>
+              <span class="text-xs text-slate-400 hidden sm:inline">• Global Box Office Hits</span>
+            </div>
+            <a href="javascript:void(0)" onclick="navigateTo('movie')" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 group">
+              <span>More</span>
+              <i data-lucide="chevron-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+            </a>
+          </div>
+
+          <!-- Cards Rail -->
+          <div class="relative group/rail">
+            <button onclick="scrollRail('trendingMoviesRail', -400)" class="absolute -left-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-[#161622]/90 border border-white/10 text-white flex items-center justify-center shadow-xl opacity-0 group-hover/rail:opacity-100 transition-opacity">
+              <i data-lucide="chevron-left" class="w-5 h-5"></i>
+            </button>
+
+            <div id="trendingMoviesRail" class="flex gap-4 overflow-x-auto pb-4 pt-1 hide-scrollbar scroll-smooth">
+              <!-- Injected by JavaScript -->
+            </div>
+
+            <button onclick="scrollRail('trendingMoviesRail', 400)" class="absolute -right-3 top-1/2 -translate-y-1/2 z-20 w-9 h-9 rounded-full bg-[#161622]/90 border border-white/10 text-white flex items-center justify-center shadow-xl opacity-0 group-hover/rail:opacity-100 transition-opacity">
+              <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+        </section>
+
+        <!-- ==================== 4. SECTION: NEW RELEASE ⚡ ==================== -->
+        <section class="mb-6">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                New Release ⚡
+              </h2>
+              <p class="text-xs text-slate-400">Freshly added episodes and direct-to-digital films</p>
+            </div>
+            <button onclick="showToast('Displaying latest additions')" class="text-xs font-semibold text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+              <span>View All</span>
+              <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div id="newReleaseGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <!-- Injected by JavaScript -->
+          </div>
+        </section>
+
+        <!-- ========================================================
+             BANNER_HORIZONTAL: PERSIS DI BAWAH SECTION NEW RELEASE
+             (Sesuai Syarat Mutlak Aturan Iklan Poin 2)
+             ======================================================== -->
+        <section id="horizontalAdBannerSection" class="mb-10 w-full">
+          <div 
+            onclick="handleHorizontalBannerClick()" 
+            class="group cursor-pointer relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#0d1b2a] via-[#1b263b] to-[#0d1b2a] border border-cyan-500/40 p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl hover:border-cyan-400 transition-all duration-300"
+          >
+            <!-- Badge Iklan Sponsored -->
+            <span class="absolute top-2 right-3 text-[9px] uppercase tracking-wider text-slate-400 font-semibold bg-black/50 px-2 py-0.5 rounded border border-white/5">
+              Advertisement • Sponsored
+            </span>
+
+            <!-- Content Banner Left (Mirip Strong VPN di screenshot) -->
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <i data-lucide="shield-alert" class="w-7 h-7"></i>
+              </div>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-sm sm:text-base font-black text-amber-400 uppercase tracking-wider">STRONG VPN</span>
+                  <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 text-[10px] font-bold">Zero Logging</span>
+                </div>
+                <h4 class="text-base sm:text-lg font-bold text-white tracking-tight">
+                  ACHIEVE TOTAL ONLINE SECURITY & UNLIMITED HIGH-SPEED STREAMING
+                </h4>
+                <p class="text-xs text-slate-300">Bypass geo-restrictions, protect your privacy, and unlock 4K library worldwide.</p>
+              </div>
+            </div>
+
+            <!-- Call to Action Button Right -->
+            <div class="shrink-0">
+              <div class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 group-hover:from-amber-300 group-hover:to-amber-400 text-black font-extrabold text-xs uppercase tracking-wider shadow-lg shadow-amber-500/30 transition-all flex items-center gap-2">
+                <span>START NOW</span>
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 5. SECTION: POPULAR MOVIES & FAVORITES ==================== -->
+        <!-- Sesuai Aturan Poin 3: Tempatkan BANNER_KOTAK persis di sidebar kanan di antara section Popular Movies dan Favorites -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+          
+          <!-- Kolom Kiri (2 Kolom): Popular Movies -->
+          <div class="lg:col-span-2">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+                Popular Movies <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+              </h2>
+              <button onclick="showToast('Popular movies rank refreshed')" class="text-xs text-cyan-400 hover:underline">
+                See Ranking
+              </button>
+            </div>
+
+            <div id="popularMoviesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <!-- Injected by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Kolom Kanan (1 Kolom): Sidebar Kanan dengan BANNER_KOTAK di antara Popular Movies & Favorites -->
+          <div class="space-y-6">
+            
+            <!-- Widget Ringkasan Section Popular Movies Quick Access -->
+            <div class="bg-[#121218] border border-[#262636] rounded-2xl p-4">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-300 uppercase tracking-wider">Top Box Office Trending</span>
+                <span class="text-[10px] text-cyan-400 font-semibold">Live Feed</span>
+              </div>
+              <p class="text-[11px] text-slate-400">Watch the most watched films of the season in crisp 4K Ultra HD.</p>
+            </div>
+
+            <!-- ========================================================
+                 BANNER_KOTAK: PERSIS DI SIDEBAR KANAN DI ANTARA SECTION POPULAR MOVIES DAN FAVORITES
+                 (Sesuai Syarat Mutlak Aturan Iklan Poin 3)
+                 ======================================================== -->
+            <div id="squareAdBannerWidget" class="w-full">
+              <div 
+                onclick="handleSquareBannerClick()" 
+                class="cursor-pointer group relative overflow-hidden rounded-2xl bg-gradient-to-b from-[#1a1a2e] to-[#0f0f1a] border border-cyan-500/40 p-5 text-center flex flex-col items-center justify-center gap-3 shadow-xl hover:border-cyan-400 transition-all"
+              >
+                <!-- Label Banner Kotak -->
+                <span class="absolute top-2.5 right-3 text-[8px] uppercase tracking-wider text-slate-400 bg-black/60 px-2 py-0.5 rounded border border-white/5 font-semibold">
+                  SPONSOR 300x250
+                </span>
+                
+                <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-cyan-500/30 group-hover:scale-110 transition-transform mt-2">
+                  <i data-lucide="play-circle" class="w-8 h-8"></i>
+                </div>
+
+                <div class="space-y-1">
+                  <h4 class="text-sm font-bold text-white leading-tight">
+                    Watch in 4K HDR Without Buffering
+                  </h4>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">
+                    Unlock instant access to 25,000+ premiere titles with ultra-fast servers.
+                  </p>
+                </div>
+
+                <button class="w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 group-hover:from-cyan-300 group-hover:to-emerald-300 text-black font-extrabold text-xs uppercase tracking-wide transition-all shadow-md shadow-cyan-500/20">
+                  INSTALL NOW & STREAM
+                </button>
+              </div>
+            </div>
+
+            <!-- Section Favorites Community -->
+            <div class="bg-[#121218] border border-[#262636] rounded-2xl p-4">
+              <div class="flex items-center justify-between mb-3 pb-2 border-b border-[#262636]">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                  <i data-lucide="heart" class="w-4 h-4 text-rose-500 fill-rose-500"></i>
+                  Community Favorites
+                </h3>
+                <span class="text-[10px] text-slate-400">Live Votes</span>
+              </div>
+
+              <div id="favoritesList" class="space-y-3">
+                <!-- Injected by JavaScript -->
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div><!-- End mainContentContainer -->
+
+    </main>
+  </div>
+
+  <!-- ==================== POPUP VIDEO PLAYER MODAL (100% WORKING) ==================== -->
+  <div id="videoModal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 hidden opacity-0 transition-opacity duration-300">
+    <div class="relative w-full max-w-5xl bg-[#121218] border border-[#2e2e44] rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-[#262636] bg-[#161622]">
+        <div class="flex items-center gap-3">
+          <div class="w-2.5 h-2.5 rounded-full bg-red-500 animate-ping"></div>
+          <div>
+            <h3 id="modalMovieTitle" class="text-sm sm:text-base font-bold text-white truncate max-w-md">Streaming Title</h3>
+            <p id="modalMovieMeta" class="text-[11px] text-slate-400">1080p Ultra HD • Stereo Sound</p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <!-- Direct Link Trigger Button from Player -->
+          <button onclick="openDirectLink()" class="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-lg bg-cyan-500/20 text-cyan-300 text-xs font-semibold hover:bg-cyan-500/30 border border-cyan-500/30 transition-colors">
+            <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+            <span>HD Server 2</span>
+          </button>
+          
+          <!-- Tombol Close 'X' -->
+          <button id="closeModalBtn" onclick="closeVideoModal()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/10 transition-colors" title="Close Player">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Player Canvas / Video Area -->
+      <div class="relative w-full bg-black aspect-video flex items-center justify-center group/player overflow-hidden">
+        
+        <video 
+          id="activeVideoElement" 
+          class="w-full h-full object-contain"
+          src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+          playsinline
+        ></video>
+
+        <!-- Big Center Play/Pause Overlay Button -->
+        <button id="centerPlayBtn" onclick="togglePlayPause()" class="absolute inset-0 m-auto w-16 h-16 rounded-full bg-cyan-500/90 text-black flex items-center justify-center shadow-2xl shadow-cyan-500/50 hover:scale-110 active:scale-95 transition-all">
+          <i data-lucide="play" id="centerPlayIcon" class="w-8 h-8 fill-black translate-x-0.5"></i>
+        </button>
+
+        <!-- Player Custom Controls Bar -->
+        <div class="absolute inset-x-0 bottom-0 p-3 sm:p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent flex flex-col gap-2 transition-opacity duration-300">
+          
+          <!-- Progress Scrubber -->
+          <div class="w-full relative flex items-center group/scrub cursor-pointer" onclick="handleSeek(event)">
+            <div class="w-full h-1.5 bg-white/20 rounded-full overflow-hidden">
+              <div id="videoProgressBar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-400 w-0 transition-all"></div>
+            </div>
+          </div>
+
+          <!-- Bottom Button Row -->
+          <div class="flex items-center justify-between text-white text-xs">
+            <div class="flex items-center gap-3">
+              <button onclick="togglePlayPause()" class="hover:text-cyan-400 transition-colors" title="Play/Pause">
+                <i data-lucide="play" id="controlPlayIcon" class="w-4 h-4 fill-current"></i>
+              </button>
+              
+              <button onclick="toggleMute()" class="hover:text-cyan-400 transition-colors" title="Mute/Unmute">
+                <i data-lucide="volume-2" id="volumeIcon" class="w-4 h-4"></i>
+              </button>
+
+              <span id="videoTimeDisplay" class="text-[11px] text-slate-300 font-mono">00:00 / 09:56</span>
+            </div>
+
+            <div class="flex items-center gap-3">
+              <!-- Quality Dropdown Simulator -->
+              <span class="px-2 py-0.5 rounded bg-white/10 text-[10px] font-bold text-cyan-400">1080p FHD</span>
+              
+              <!-- Subtitles Simulator -->
+              <button onclick="showToast('Subtitles: English [CC] Enabled')" class="hover:text-cyan-400 transition-colors" title="Subtitles">
+                <i data-lucide="subtitles" class="w-4 h-4"></i>
+              </button>
+
+              <!-- Fullscreen Button -->
+              <button onclick="toggleFullscreen()" class="hover:text-cyan-400 transition-colors" title="Fullscreen">
+                <i data-lucide="maximize" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video Description & Episode Picker -->
+      <div class="p-4 sm:p-6 bg-[#121218] overflow-y-auto space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#262636]">
+          <div>
+            <h4 class="text-sm font-bold text-white">Episodes & Streaming Mirrors</h4>
+            <p id="modalMovieDesc" class="text-xs text-slate-400 mt-1">Select an episode or switch server to begin viewing.</p>
+          </div>
+          <button onclick="openDirectLink()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-emerald-400 text-black text-xs font-bold flex items-center gap-2 shrink-0">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Download Offline (Direct)</span>
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-2">
+          <button onclick="switchEpisode(1)" class="p-2.5 rounded-xl bg-[#1c1c28] border border-cyan-400/40 text-left hover:bg-[#252538] transition-colors">
+            <p class="text-[10px] text-cyan-400 font-bold uppercase">Ep 1 (Playing)</p>
+            <p class="text-xs font-semibold text-white">Pilot / Awakening</p>
+          </button>
+          <button onclick="switchEpisode(2)" class="p-2.5 rounded-xl bg-[#161622] border border-[#262636] text-left hover:bg-[#252538] transition-colors">
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Ep 2</p>
+            <p class="text-xs font-semibold text-slate-200">The Neon Signal</p>
+          </button>
+          <button onclick="switchEpisode(3)" class="p-2.5 rounded-xl bg-[#161622] border border-[#262636] text-left hover:bg-[#252538] transition-colors">
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Ep 3</p>
+            <p class="text-xs font-semibold text-slate-200">Hidden Frequency</p>
+          </button>
+          <button onclick="switchEpisode(4)" class="p-2.5 rounded-xl bg-[#161622] border border-[#262636] text-left hover:bg-[#252538] transition-colors">
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Ep 4</p>
+            <p class="text-xs font-semibold text-slate-200">Midnight Crossing</p>
+          </button>
+          <button onclick="switchEpisode(5)" class="p-2.5 rounded-xl bg-[#161622] border border-[#262636] text-left hover:bg-[#252538] transition-colors">
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Ep 5</p>
+            <p class="text-xs font-semibold text-slate-200">Resonance</p>
+          </button>
+          <button onclick="switchEpisode(6)" class="p-2.5 rounded-xl bg-[#161622] border border-[#262636] text-left hover:bg-[#252538] transition-colors">
+            <p class="text-[10px] text-slate-400 font-bold uppercase">Ep 6</p>
+            <p class="text-xs font-semibold text-slate-200">Finale Part 1</p>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== FLOATING LIVE CHAT BUBBLE ==================== -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <button 
+      onclick="handleAdClick(event, 'MovieBox Support / Chat')" 
+      class="w-13 h-13 p-3 rounded-2xl bg-gradient-to-tr from-cyan-400 to-emerald-400 text-black shadow-xl shadow-cyan-400/30 flex items-center justify-center hover:scale-110 active:scale-95 transition-transform group"
+      title="MovieBox Live Chat"
+    >
+      <i data-lucide="message-square" class="w-6 h-6 fill-black"></i>
+    </button>
+  </div>
+
+  <!-- ==================== TOAST NOTIFICATION CONTAINER ==================== -->
+  <div id="toastContainer" class="fixed bottom-6 left-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ========================================================
+       JAVASCRIPT: LOGIKA BISNIS, STATE MANAGEMENT, IKLAN & INTERAKTIF
+       ======================================================== -->
+  <script>
+    /* ==================== 1. DATA FILM & DATABASE ==================== */
+    const MOVIES_DATABASE = [
+      {
+        id: "m1",
+        title: "Take Charge of My Heart",
+        category: "tv_show",
+        genre: "Comedy, Fantasy, Romance",
+        year: 2026,
+        rating: 9.4,
+        type: "Drama",
+        badge: "Trending #1",
+        isNew: true,
+        poster: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        desc: "When a high-powered tech prodigy accidentally syncs her neural bio-tracker with a spirited cafe musician, their emotions become intertwined across Seoul."
+      },
+      {
+        id: "m2",
+        title: "Bound by Promise",
+        category: "tv_show",
+        genre: "Drama, Crime, Mystery",
+        year: 2026,
+        rating: 8.9,
+        type: "Drama",
+        badge: "Hot",
+        isNew: true,
+        poster: "https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        desc: "Two childhood friends on opposing sides of the legal system confront a family debt that could destroy the city council."
+      },
+      {
+        id: "m3",
+        title: "Tante Sonya",
+        category: "movie",
+        genre: "Comedy, Drama",
+        year: 2026,
+        rating: 8.7,
+        type: "Movie",
+        badge: "Exclusive",
+        isNew: false,
+        poster: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        desc: "An eccentric aunt arrives without warning at an upscale Jakarta villa, flipping traditional expectations upside down with wit and chaos."
+      },
+      {
+        id: "m4",
+        title: "Flex x Cop",
+        category: "tv_show",
+        genre: "Action, Comedy, Crime",
+        year: 2025,
+        rating: 9.1,
+        type: "Drama",
+        badge: "Popular",
+        isNew: false,
+        poster: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        desc: "An immature third-generation chaebol heir joins the violent crime detective team using his vast wealth and absurd connections to catch untouchable criminals."
+      },
+      {
+        id: "m5",
+        title: "Suara Hati",
+        category: "tv_show",
+        genre: "Family, Romance",
+        year: 2026,
+        rating: 8.5,
+        type: "Drama",
+        badge: "High Rating",
+        isNew: true,
+        poster: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        desc: "A classical soprano who loses her hearing discovers an intuitive way to compose orchestrations through subterranean vibrations."
+      },
+      {
+        id: "m6",
+        title: "Jakarta Undercover: Members Only",
+        category: "midnight",
+        genre: "Thriller, Noir, Mystery",
+        year: 2026,
+        rating: 9.3,
+        type: "Midnight",
+        badge: "18+",
+        isNew: true,
+        poster: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyBlazes.mp4",
+        desc: "An investigative reporter infiltrates the clandestine high-roller speakeasies of the capital to uncover who vanished without a trace."
+      },
+      {
+        id: "m7",
+        title: "Black Clover: Kingdom War",
+        category: "animation",
+        genre: "Anime, Action, Fantasy",
+        year: 2026,
+        rating: 9.6,
+        type: "Anime",
+        badge: "Top Anime",
+        isNew: true,
+        poster: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4",
+        desc: "Asta and the Black Bulls take the frontline against an ancient demonic uprising as the Magic Knights unite for their final stand."
+      },
+      {
+        id: "m8",
+        title: "A Bona Fide Killer",
+        category: "movie",
+        genre: "Action, Crime, Thriller",
+        year: 2026,
+        rating: 9.0,
+        type: "Movie",
+        badge: "4K HDR",
+        isNew: true,
+        poster: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4",
+        desc: "A retired assassin must navigate a city locked down by rival bounty syndicates after protecting an innocent bystander in Tokyo."
+      },
+      {
+        id: "m9",
+        title: "Spider-Man: Beyond Dimensions",
+        category: "movie",
+        genre: "Action, Sci-Fi, Adventure",
+        year: 2026,
+        rating: 9.5,
+        type: "Movie",
+        badge: "Blockbuster",
+        isNew: true,
+        poster: "https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        desc: "Multiversal anomalies converge onto Manhattan, testing web-slingers from disparate eras to reconstruct the timeline."
+      },
+      {
+        id: "m10",
+        title: "The Silent Orbit",
+        category: "movie",
+        genre: "Sci-Fi, Thriller",
+        year: 2026,
+        rating: 8.8,
+        type: "Movie",
+        badge: "Award Winner",
+        isNew: false,
+        poster: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        desc: "Astronauts aboard a lunar deep-relay station detect a recurring acoustic pulse originating deep within Jupiter's Great Red Spot."
+      },
+      {
+        id: "m11",
+        title: "Chainsaw Blade Symphony",
+        category: "animation",
+        genre: "Anime, Supernatural, Dark",
+        year: 2026,
+        rating: 9.2,
+        type: "Anime",
+        badge: "Trending",
+        isNew: true,
+        poster: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        desc: "Devil hunters in Shibuya confront an unprecedented outbreak as demonic contracts spread through wireless telephone signals."
+      },
+      {
+        id: "m12",
+        title: "Midnight Tokyo Whispers",
+        category: "midnight",
+        genre: "Mystery, Romance, Noir",
+        year: 2025,
+        rating: 8.6,
+        type: "Midnight",
+        badge: "Curated",
+        isNew: false,
+        poster: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=600&q=80",
+        videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        desc: "A late-night radio DJ receives anonymous audio diary cassettes that predict real events before they take place in Shinjuku."
+      }
+    ];
+
+    /* State Management */
+    let currentActivePage = 'home';
+    let userWatchlist = ['Take Charge of My Heart', 'Black Clover: Kingdom War', 'Bound by Promise'];
+    let isNightMode = true;
+    let isLoggedIn = false;
+
+    /* ==================== 2. ATURAN IKLAN & MONETISASI (WAJIB) ==================== */
+    
+    /**
+     * Aturan Iklan 1:
+     * Semua tombol "Watch", tombol "Play", dan kartu/poster film di semua section
+     * harus berfungsi ganda: membuka modal video player ATAU mengarahkan klik
+     * ke variabel DIRECT_LINK (buka di tab baru).
+     */
+    function handlePlayMovie(movieData) {
+      // 1. Dual Action: Buka DIRECT_LINK di tab baru
+      openDirectLink();
+
+      // 2. Dual Action: Tampilkan Popup Modal Video Player Interaktif
+      openVideoModal(movieData);
+    }
+
+    /**
+     * Membuka DIRECT_LINK ke tab baru
+     */
+    function openDirectLink() {
+      try {
+        window.open(DIRECT_LINK, '_blank', 'noopener,noreferrer');
+      } catch (err) {
+        console.warn('Navigation blocked or handled:', err);
+      }
+    }
+
+    /**
+     * Aturan Iklan 2:
+     * BANNER_HORIZONTAL persis di bawah section New Release
+     */
+    function handleHorizontalBannerClick() {
+      showToast('Connecting to verified sponsor stream network...');
+      window.open(BANNER_HORIZONTAL, '_blank', 'noopener,noreferrer');
+    }
+
+    /**
+     * Aturan Iklan 3:
+     * BANNER_KOTAK persis di sidebar kanan di antara section Popular Movies dan Favorites
+     */
+    function handleSquareBannerClick() {
+      showToast('Claiming 4K VIP promo rewards...');
+      window.open(BANNER_KOTAK, '_blank', 'noopener,noreferrer');
+    }
+
+    /**
+     * Handler untuk klik promosi / header umum
+     */
+    function handleAdClick(e, label) {
+      if (e) e.stopPropagation();
+      showToast(`Redirecting to sponsor: ${label}`);
+      openDirectLink();
+    }
+
+
+    /* ==================== 3. RENDER GENERATOR KARTU FILM ==================== */
+    function createMovieCardHTML(movie) {
+      const isSaved = userWatchlist.includes(movie.title);
+      const safeMovieJSON = encodeURIComponent(JSON.stringify(movie));
+
+      return `
+        <div class="card-zoom relative flex-shrink-0 w-36 sm:w-44 md:w-48 group cursor-pointer" onclick="handleCardClick('${safeMovieJSON}')">
+          <!-- Poster Container -->
+          <div class="relative w-full aspect-[2/3] rounded-2xl overflow-hidden bg-[#161622] border border-[#2a2a3e] shadow-lg">
+            <img 
+              src="${movie.poster}" 
+              alt="${movie.title}" 
+              loading="lazy" 
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+            
+            <!-- Gradient Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20 opacity-60 group-hover:opacity-90 transition-opacity"></div>
+            
+            <!-- Badges -->
+            <div class="absolute top-2 left-2 flex flex-col gap-1 z-10">
+              ${movie.badge ? `<span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md text-cyan-400 border border-cyan-400/30">${movie.badge}</span>` : ''}
+              ${movie.isNew ? `<span class="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider bg-emerald-500/80 text-black">New</span>` : ''}
+            </div>
+
+            <!-- Bookmark / Add to List Button (+) -->
+            <button 
+              onclick="event.stopPropagation(); toggleWatchlist('${movie.title.replace(/'/g, "\\'")}')" 
+              class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:bg-cyan-400 hover:text-black transition-all z-10"
+              title="Add to Watchlist"
+            >
+              <i data-lucide="${isSaved ? 'check' : 'plus'}" class="w-4 h-4 ${isSaved ? 'text-cyan-400' : ''}"></i>
+            </button>
+
+            <!-- Hover Quick Play Button -->
+            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+              <div class="w-12 h-12 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-black flex items-center justify-center shadow-xl shadow-cyan-400/50 transform scale-75 group-hover:scale-100 transition-transform">
+                <i data-lucide="play" class="w-6 h-6 fill-black translate-x-0.5"></i>
+              </div>
+            </div>
+
+            <!-- Bottom Poster Rating Info -->
+            <div class="absolute bottom-2 left-2 right-2 flex items-center justify-between text-[11px] text-slate-300 z-10">
+              <span class="flex items-center gap-1 font-semibold text-amber-400">
+                <i data-lucide="star" class="w-3 h-3 fill-amber-400"></i> ${movie.rating}
+              </span>
+              <span class="text-[10px] text-slate-400">${movie.year}</span>
+            </div>
+          </div>
+
+          <!-- Title and Genre -->
+          <div class="mt-2 space-y-0.5">
+            <h3 class="text-xs sm:text-sm font-semibold text-slate-100 truncate group-hover:text-cyan-400 transition-colors">
+              ${movie.title}
+            </h3>
+            <p class="text-[11px] text-slate-400 truncate">
+              ${movie.genre}
+            </p>
+          </div>
+        </div>
+      `;
+    }
+
+    function handleCardClick(encodedMovie) {
+      try {
+        const movie = JSON.parse(decodeURIComponent(encodedMovie));
+        handlePlayMovie(movie);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+
+    /* ==================== 4. POPULASI DATA AWAL ==================== */
+    function initializeContent() {
+      // 1. Trending Drama Rail
+      const dramaRail = document.getElementById('trendingDramaRail');
+      if (dramaRail) {
+        const dramas = MOVIES_DATABASE.filter(m => m.category === 'tv_show' || m.type === 'Drama');
+        dramaRail.innerHTML = dramas.map(createMovieCardHTML).join('');
+      }
+
+      // 2. Trending Movies Rail
+      const moviesRail = document.getElementById('trendingMoviesRail');
+      if (moviesRail) {
+        const movies = MOVIES_DATABASE.filter(m => m.category === 'movie' || m.type === 'Movie');
+        moviesRail.innerHTML = movies.map(createMovieCardHTML).join('');
+      }
+
+      // 3. New Release Grid
+      const newGrid = document.getElementById('newReleaseGrid');
+      if (newGrid) {
+        const newReleases = MOVIES_DATABASE.filter(m => m.isNew).slice(0, 6);
+        newGrid.innerHTML = newReleases.map(createMovieCardHTML).join('');
+      }
+
+      // 4. Popular Movies Grid
+      const popGrid = document.getElementById('popularMoviesGrid');
+      if (popGrid) {
+        const popular = MOVIES_DATABASE.slice(0, 8);
+        popGrid.innerHTML = popular.map(createMovieCardHTML).join('');
+      }
+
+      // 5. Favorites List (Right sidebar)
+      const favList = document.getElementById('favoritesList');
+      if (favList) {
+        const topFavs = MOVIES_DATABASE.slice(0, 4);
+        favList.innerHTML = topFavs.map(m => `
+          <div onclick="handlePlayMovie({title: '${m.title}', year: '${m.year}', genre: '${m.genre}', rating: '${m.rating}', videoUrl: '${m.videoUrl}', poster: '${m.poster}'})" class="flex items-center gap-3 p-1.5 rounded-xl hover:bg-white/5 cursor-pointer group transition-colors">
+            <img src="${m.poster}" class="w-10 h-14 object-cover rounded-lg shrink-0 border border-white/5" alt="${m.title}" />
+            <div class="flex-1 min-w-0">
+              <h4 class="text-xs font-semibold text-slate-200 truncate group-hover:text-cyan-400">${m.title}</h4>
+              <p class="text-[10px] text-slate-400">${m.genre.split(',')[0]} • ${m.year}</p>
+              <div class="flex items-center gap-1 text-[10px] text-amber-400 font-bold mt-0.5">
+                <i data-lucide="star" class="w-2.5 h-2.5 fill-amber-400"></i> ${m.rating}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Update Watchlist badge count
+      updateWatchlistBadge();
+
+      // Refresh icons
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    }
+
+
+    /* ==================== 5. SISTEM HALAMAN / MENU SIDEBAR (STATE MANAGEMENT) ==================== */
+    /**
+     * Syarat Mutlak 1:
+     * Ketika menu sidebar diklik (Home, TV show, Movie, Midnight, Animation, Most Watched,
+     * Watch List, Coming Soon, Discovery, Friends, Parties, Media, Setting),
+     * area Konten Utama merubah tampilannya secara dinamis dengan data/kartu relevan.
+     */
+    function navigateTo(pageKey) {
+      currentActivePage = pageKey;
+
+      // Update active nav button styling
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        if (btn.getAttribute('data-page') === pageKey) {
+          btn.classList.add('active', 'bg-[#1a1a24]', 'text-white');
+          btn.classList.remove('text-slate-400');
+          const icon = btn.querySelector('i');
+          if (icon) icon.classList.add('text-cyan-400');
+        } else {
+          btn.classList.remove('active', 'bg-[#1a1a24]', 'text-white');
+          btn.classList.add('text-slate-400');
+        }
+      });
+
+      // Tutup sidebar di mobile
+      closeMobileSidebar();
+
+      // Switch Tampilan Konten Utama
+      const container = document.getElementById('mainContentContainer');
+      const resetSearchHeader = document.getElementById('searchFilterHeader');
+      if (resetSearchHeader) resetSearchHeader.classList.add('hidden');
+
+      if (pageKey === 'home') {
+        location.reload();
+        return;
+      }
+
+      // Render Dynamic Views sesuai Menu yang diklik
+      let viewTitle = pageKey.replace('_', ' ').toUpperCase();
+      let filteredMovies = [];
+
+      switch (pageKey) {
+        case 'tv_show':
+          viewTitle = 'TV Series & Trending K-Dramas';
+          filteredMovies = MOVIES_DATABASE.filter(m => m.category === 'tv_show' || m.type === 'Drama');
+          break;
+        case 'movie':
+          viewTitle = 'Full Length Feature Blockbusters';
+          filteredMovies = MOVIES_DATABASE.filter(m => m.category === 'movie' || m.type === 'Movie');
+          break;
+        case 'midnight':
+          viewTitle = 'Midnight Thrillers, Mystery & 18+ Cinema';
+          filteredMovies = MOVIES_DATABASE.filter(m => m.category === 'midnight');
+          break;
+        case 'animation':
+          viewTitle = 'Anime & Animated Premieres';
+          filteredMovies = MOVIES_DATABASE.filter(m => m.category === 'animation');
+          break;
+        case 'most_watched':
+          viewTitle = 'Most Watched Global Charts & Records';
+          filteredMovies = [...MOVIES_DATABASE].sort((a,b) => b.rating - a.rating);
+          break;
+        case 'watchlist':
+          viewTitle = 'My Personal Watch List';
+          filteredMovies = MOVIES_DATABASE.filter(m => userWatchlist.includes(m.title));
+          break;
+        case 'coming_soon':
+          renderComingSoonPage(container);
+          return;
+        case 'discovery':
+          renderDiscoveryPage(container);
+          return;
+        case 'friends':
+          renderFriendsPage(container);
+          return;
+        case 'parties':
+          renderPartiesPage(container);
+          return;
+        case 'media':
+          renderMediaPage(container);
+          return;
+        case 'setting':
+          renderSettingsPage(container);
+          return;
+      }
+
+      // Tampilan Grid Standar Kategori
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#262636] gap-4">
+            <div>
+              <div class="flex items-center gap-2">
+                <button onclick="navigateTo('home')" class="text-xs text-cyan-400 hover:underline">← Back to Home</button>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-black text-white mt-1">${viewTitle}</h1>
+              <p class="text-xs text-slate-400 mt-0.5">Showing ${filteredMovies.length} curated titles ready to stream</p>
+            </div>
+            
+            <!-- Filter Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-1">
+              <span class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-400 text-xs font-semibold cursor-pointer">All Genres</span>
+              <span onclick="showToast('Filter: 4K Ultra HD')" class="px-3 py-1.5 rounded-xl bg-[#161622] text-slate-400 hover:text-white text-xs cursor-pointer border border-[#262636]">4K Ultra HD</span>
+              <span onclick="showToast('Filter: Top Rated IMDb 8.5+')" class="px-3 py-1.5 rounded-xl bg-[#161622] text-slate-400 hover:text-white text-xs cursor-pointer border border-[#262636]">Top Rated</span>
+            </div>
+          </div>
+
+          <!-- Grid Film -->
+          ${filteredMovies.length > 0 ? `
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+              ${filteredMovies.map(createMovieCardHTML).join('')}
+            </div>
+          ` : `
+            <div class="text-center py-20 bg-[#121218] rounded-3xl border border-[#262636]">
+              <i data-lucide="bookmark-x" class="w-12 h-12 text-slate-500 mx-auto mb-3"></i>
+              <h3 class="text-base font-bold text-white">No titles saved in this collection</h3>
+              <p class="text-xs text-slate-400 mt-1">Tap the plus (+) icon on any poster to bookmark titles here.</p>
+              <button onclick="navigateTo('home')" class="mt-4 px-4 py-2 rounded-xl bg-cyan-400 text-black text-xs font-bold">Discover Movies</button>
+            </div>
+          `}
+
+          <!-- Banner Promo Sponsor -->
+          <div onclick="handleHorizontalBannerClick()" class="cursor-pointer p-4 rounded-2xl bg-gradient-to-r from-cyan-950/60 to-emerald-950/50 border border-cyan-500/30 flex items-center justify-between text-xs text-slate-300">
+            <span class="font-bold text-cyan-300">⚡ SPONSOR: Download the official MovieBox PC & TV app for zero-lag streaming.</span>
+            <span class="px-3 py-1 rounded bg-cyan-400 text-black font-bold text-[10px]">DOWNLOAD</span>
+          </div>
+        </div>
+      `;
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // Dynamic View: Coming Soon
+    function renderComingSoonPage(container) {
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="pb-4 border-b border-[#262636]">
+            <h1 class="text-2xl sm:text-3xl font-black text-white">Upcoming Premieres 2026</h1>
+            <p class="text-xs text-slate-400">Set instant push alerts for upcoming blockbuster releases</p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-4 rounded-2xl bg-[#161622] border border-[#262636] flex gap-4">
+              <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=300&q=80" class="w-24 h-36 object-cover rounded-xl" />
+              <div class="space-y-2">
+                <span class="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-bold">Releasing Nov 2026</span>
+                <h3 class="text-base font-bold text-white">Cyber Samurai 2099</h3>
+                <p class="text-xs text-slate-400">The anticipated sci-fi epic following ronin detectives in subterranean Neo-Tokyo.</p>
+                <button onclick="showToast('Push alert set for Cyber Samurai 2099!')" class="px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 text-xs font-semibold hover:bg-cyan-500/30">Set Alert</button>
+              </div>
+            </div>
+            <div class="p-4 rounded-2xl bg-[#161622] border border-[#262636] flex gap-4">
+              <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&w=300&q=80" class="w-24 h-36 object-cover rounded-xl" />
+              <div class="space-y-2">
+                <span class="text-[10px] bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded font-bold">Releasing Dec 2026</span>
+                <h3 class="text-base font-bold text-white">The Arctic Protocol</h3>
+                <p class="text-xs text-slate-400">Deep glaciology researchers encounter a subterranean lifeform locked beneath Greenland ice.</p>
+                <button onclick="showToast('Push alert set for The Arctic Protocol!')" class="px-3 py-1.5 rounded-lg bg-cyan-500/20 text-cyan-300 text-xs font-semibold hover:bg-cyan-500/30">Set Alert</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Dynamic View: Discovery
+    function renderDiscoveryPage(container) {
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="pb-4 border-b border-[#262636]">
+            <h1 class="text-2xl sm:text-3xl font-black text-white">Discovery Radar</h1>
+            <p class="text-xs text-slate-400">Browse curated thematic universes and deep-cut genres</p>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+            ${['Cyberpunk & Dystopia', 'Heartfelt Romance', 'High Stakes Heist', 'Supernatural Anime', 'Psychological Thriller', 'Historical Epics'].map(cat => `
+              <div onclick="showToast('Exploring collection: ${cat}');" class="p-6 rounded-2xl bg-gradient-to-br from-[#1a1a2e] to-[#12121e] border border-[#2e2e42] hover:border-cyan-400 cursor-pointer text-center group transition-all">
+                <i data-lucide="compass" class="w-8 h-8 text-cyan-400 mx-auto mb-2 group-hover:rotate-45 transition-transform"></i>
+                <h3 class="text-sm font-bold text-white">${cat}</h3>
+                <p class="text-[10px] text-slate-400 mt-1">40+ Curated Titles</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // Dynamic View: Friends
+    function renderFriendsPage(container) {
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="pb-4 border-b border-[#262636]">
+            <h1 class="text-2xl sm:text-3xl font-black text-white">Cinema Social & Friends</h1>
+            <p class="text-xs text-slate-400">See what your social circle is streaming in real-time</p>
+          </div>
+          <div class="space-y-3 max-w-2xl">
+            <div class="p-4 rounded-2xl bg-[#161622] border border-[#262636] flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-cyan-500/30 text-cyan-300 font-bold flex items-center justify-center">AL</div>
+                <div>
+                  <h4 class="text-xs font-bold text-white">Alex Larson <span class="text-[10px] text-emerald-400 ml-2 font-normal">● Watching Now</span></h4>
+                  <p class="text-xs text-slate-400">Take Charge of My Heart • Episode 11</p>
+                </div>
+              </div>
+              <button onclick="handlePlayMovie(MOVIES_DATABASE[0])" class="px-3 py-1.5 rounded-lg bg-cyan-400 text-black text-xs font-bold">Join Stream</button>
+            </div>
+            <div class="p-4 rounded-2xl bg-[#161622] border border-[#262636] flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-purple-500/30 text-purple-300 font-bold flex items-center justify-center">SR</div>
+                <div>
+                  <h4 class="text-xs font-bold text-white">Sarah Reynolds <span class="text-[10px] text-slate-500 ml-2 font-normal">2h ago</span></h4>
+                  <p class="text-xs text-slate-400">Rated "Bound by Promise" ★★★★★ (9.8/10)</p>
+                </div>
+              </div>
+              <button onclick="showToast('Friend nudge sent!')" class="px-3 py-1.5 rounded-lg bg-white/10 text-white text-xs font-bold">Nudge</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Dynamic View: Parties
+    function renderPartiesPage(container) {
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="pb-4 border-b border-[#262636]">
+            <h1 class="text-2xl sm:text-3xl font-black text-white">Watch Parties</h1>
+            <p class="text-xs text-slate-400">Sync playback with friends in an interactive synchronized room</p>
+          </div>
+          <div class="p-8 rounded-3xl bg-gradient-to-r from-[#171725] to-[#1e1e30] border border-cyan-500/30 text-center max-w-xl mx-auto space-y-4">
+            <div class="w-16 h-16 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mx-auto">
+              <i data-lucide="popcorn" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-lg font-bold text-white">Host a Virtual Movie Night</h3>
+            <p class="text-xs text-slate-300">Invite up to 20 guests with shared audio-video timeline synchronization.</p>
+            <button onclick="handlePlayMovie(MOVIES_DATABASE[0]); showToast('Watch party room generated! Link copied to clipboard.');" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-cyan-400 to-emerald-400 text-black text-xs font-bold uppercase tracking-wider">
+              Launch Room Now
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Dynamic View: Media
+    function renderMediaPage(container) {
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="pb-4 border-b border-[#262636]">
+            <h1 class="text-2xl sm:text-3xl font-black text-white">Media Storage & Offline Files</h1>
+            <p class="text-xs text-slate-400">Encrypted offline downloads for planes and low-connectivity travel</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-[#161622] border border-[#262636] flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-white">Local Storage Space</p>
+              <p class="text-[11px] text-slate-400">3.4 GB of 32 GB used (3 titles downloaded)</p>
+              <div class="w-64 h-2 bg-slate-700 rounded-full mt-2 overflow-hidden">
+                <div class="h-full bg-cyan-400 w-1/4"></div>
+              </div>
+            </div>
+            <button onclick="openDirectLink()" class="px-4 py-2 rounded-xl bg-cyan-500/20 text-cyan-300 text-xs font-bold">Download Offline</button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Dynamic View: Settings
+    function renderSettingsPage(container) {
+      container.innerHTML = `
+        <div class="space-y-6 max-w-3xl">
+          <div class="pb-4 border-b border-[#262636]">
+            <h1 class="text-2xl sm:text-3xl font-black text-white">Platform Settings</h1>
+            <p class="text-xs text-slate-400">Stream configurations, hardware acceleration, and preferences</p>
+          </div>
+          <div class="space-y-4">
+            <div class="p-4 rounded-2xl bg-[#161622] border border-[#262636] flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold text-white">Default Video Quality</p>
+                <p class="text-[11px] text-slate-400">Automatically switch up to 4K Ultra HD on high speed</p>
+              </div>
+              <span class="text-xs font-semibold text-cyan-400">Adaptive (4K UHD)</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-[#161622] border border-[#262636] flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold text-white">Hardware Acceleration</p>
+                <p class="text-[11px] text-slate-400">GPU decoding enabled for 60fps stutter-free video</p>
+              </div>
+              <span class="text-xs font-semibold text-emerald-400">Enabled</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-[#161622] border border-[#262636] flex items-center justify-between">
+              <div>
+                <p class="text-xs font-bold text-white">Monetization & Ad Preferences</p>
+                <p class="text-[11px] text-slate-400">Direct Link & Partner Network Active</p>
+              </div>
+              <button onclick="handleSquareBannerClick()" class="px-3 py-1.5 rounded-lg bg-amber-500/20 text-amber-400 text-xs font-bold">Upgrade VIP</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+
+    /* ==================== 6. PEMUTAR VIDEO MODAL (POPUP VIDEO PLAYER 100% WORKING) ==================== */
+    /**
+     * Syarat Mutlak 2:
+     * Munculkan popup modal video player interaktif di tengah layar dilengkapi
+     * tombol Close 'X' dan simulasi pemutaran video/trailer dengan controls lengkap.
+     */
+    const videoModal = document.getElementById('videoModal');
+    const activeVideo = document.getElementById('activeVideoElement');
+    const modalMovieTitle = document.getElementById('modalMovieTitle');
+    const modalMovieMeta = document.getElementById('modalMovieMeta');
+    const modalMovieDesc = document.getElementById('modalMovieDesc');
+    const videoProgressBar = document.getElementById('videoProgressBar');
+    const videoTimeDisplay = document.getElementById('videoTimeDisplay');
+    const centerPlayBtn = document.getElementById('centerPlayBtn');
+    const centerPlayIcon = document.getElementById('centerPlayIcon');
+    const controlPlayIcon = document.getElementById('controlPlayIcon');
+
+    function openVideoModal(movie) {
+      if (!movie) return;
+
+      modalMovieTitle.textContent = movie.title || 'MovieBox Stream';
+      modalMovieMeta.textContent = `${movie.year || '2026'} • ${movie.genre || 'Drama'} • Rating ★ ${movie.rating || '9.0'} • Ultra HD`;
+      if (modalMovieDesc) {
+        modalMovieDesc.textContent = movie.desc || 'Enjoy smooth high-bitrate streaming on MovieBox with multi-language subtitle tracks.';
+      }
+
+      if (movie.videoUrl && activeVideo) {
+        activeVideo.src = movie.videoUrl;
+        activeVideo.currentTime = 0;
+        activeVideo.play().then(() => {
+          updatePlayUI(true);
+        }).catch(err => {
+          console.log('Autoplay deferred:', err);
+          updatePlayUI(false);
+        });
+      }
+
+      videoModal.classList.remove('hidden');
+      setTimeout(() => {
+        videoModal.classList.remove('opacity-0');
+      }, 10);
+
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeVideoModal() {
+      if (activeVideo) {
+        activeVideo.pause();
+      }
+      videoModal.classList.add('opacity-0');
+      setTimeout(() => {
+        videoModal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    function togglePlayPause() {
+      if (!activeVideo) return;
+      if (activeVideo.paused) {
+        activeVideo.play();
+        updatePlayUI(true);
+      } else {
+        activeVideo.pause();
+        updatePlayUI(false);
+      }
+    }
+
+    function updatePlayUI(isPlaying) {
+      if (centerPlayBtn) {
+        centerPlayBtn.style.display = isPlaying ? 'none' : 'flex';
+      }
+      if (controlPlayIcon) {
+        controlPlayIcon.setAttribute('data-lucide', isPlaying ? 'pause' : 'play');
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function toggleMute() {
+      if (!activeVideo) return;
+      activeVideo.muted = !activeVideo.muted;
+      const volIcon = document.getElementById('volumeIcon');
+      if (volIcon) {
+        volIcon.setAttribute('data-lucide', activeVideo.muted ? 'volume-x' : 'volume-2');
+      }
+      showToast(activeVideo.muted ? 'Audio Muted' : 'Audio Unmuted');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function toggleFullscreen() {
+      if (!activeVideo) return;
+      if (!document.fullscreenElement) {
+        activeVideo.requestFullscreen().catch(err => console.log(err));
+      } else {
+        document.exitFullscreen().catch(err => console.log(err));
+      }
+    }
+
+    function handleSeek(e) {
+      if (!activeVideo || !activeVideo.duration) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickPosition = (e.clientX - rect.left) / rect.width;
+      activeVideo.currentTime = clickPosition * activeVideo.duration;
+    }
+
+    function switchEpisode(epNumber) {
+      showToast(`Loading Episode ${epNumber}... Synchronizing audio tracks`);
+      if (activeVideo) {
+        activeVideo.currentTime = 0;
+        activeVideo.play();
+        updatePlayUI(true);
+      }
+    }
+
+    // Listener durasi & timeline video
+    if (activeVideo) {
+      activeVideo.addEventListener('timeupdate', () => {
+        if (!activeVideo.duration) return;
+        const percent = (activeVideo.currentTime / activeVideo.duration) * 100;
+        if (videoProgressBar) {
+          videoProgressBar.style.width = `${percent}%`;
+        }
+        if (videoTimeDisplay) {
+          const curMin = Math.floor(activeVideo.currentTime / 60).toString().padStart(2, '0');
+          const curSec = Math.floor(activeVideo.currentTime % 60).toString().padStart(2, '0');
+          const durMin = Math.floor(activeVideo.duration / 60).toString().padStart(2, '0');
+          const durSec = Math.floor(activeVideo.duration % 60).toString().padStart(2, '0');
+          videoTimeDisplay.textContent = `${curMin}:${curSec} / ${durMin}:${durSec}`;
+        }
+      });
+
+      activeVideo.addEventListener('ended', () => {
+        updatePlayUI(false);
+      });
+    }
+
+    // Close modal on Escape
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !videoModal.classList.contains('hidden')) {
+        closeVideoModal();
+      }
+    });
+
+
+    /* ==================== 7. LIVE SEARCH FILTER ==================== */
+    /**
+     * Syarat Mutlak 3:
+     * Kolom Search di navbar atas berfungsi nyata menyaring/memfilter daftar film secara live.
+     */
+    const searchInput = document.getElementById('searchInput');
+    const clearSearchBtn = document.getElementById('clearSearchBtn');
+    const searchFilterHeader = document.getElementById('searchFilterHeader');
+    const searchQueryLabel = document.getElementById('searchQueryLabel');
+    const searchCountLabel = document.getElementById('searchCountLabel');
+
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        
+        if (clearSearchBtn) {
+          clearSearchBtn.classList.toggle('hidden', query.length === 0);
+        }
+
+        if (query.length === 0) {
+          resetSearch();
+          return;
+        }
+
+        // Live Filter terhadap SEMUA film di database
+        const filtered = MOVIES_DATABASE.filter(m => 
+          m.title.toLowerCase().includes(query) ||
+          m.genre.toLowerCase().includes(query) ||
+          m.category.toLowerCase().includes(query)
+        );
+
+        // Update indikator header live search
+        if (searchFilterHeader) {
+          searchFilterHeader.classList.remove('hidden');
+          searchQueryLabel.textContent = e.target.value;
+          searchCountLabel.textContent = `Found ${filtered.length} matching movies & TV shows`;
+        }
+
+        // Render hasil pencarian ke Konten Utama
+        const container = document.getElementById('mainContentContainer');
+        if (container) {
+          if (filtered.length > 0) {
+            container.innerHTML = `
+              <div class="space-y-4">
+                <div class="flex items-center justify-between pb-2 border-b border-[#262636]">
+                  <h3 class="text-base font-bold text-slate-200">Live Search Filter Results</h3>
+                  <button onclick="resetSearch()" class="text-xs text-cyan-400 hover:underline">Clear Search</button>
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                  ${filtered.map(createMovieCardHTML).join('')}
+                </div>
+              </div>
+            `;
+          } else {
+            container.innerHTML = `
+              <div class="text-center py-20 bg-[#121218] rounded-3xl border border-[#262636]">
+                <i data-lucide="search-x" class="w-12 h-12 text-slate-500 mx-auto mb-3"></i>
+                <h3 class="text-lg font-bold text-white">No titles found for "${e.target.value}"</h3>
+                <p class="text-xs text-slate-400 mt-1">Try keywords like: Drama, Spider, Tokyo, Black Clover, or Cop</p>
+                <button onclick="resetSearch()" class="mt-4 px-4 py-2 rounded-xl bg-cyan-400 text-black text-xs font-bold">Clear Filter</button>
+              </div>
+            `;
+          }
+          if (window.lucide) lucide.createIcons();
+        }
+      });
+    }
+
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', resetSearch);
+    }
+
+    function resetSearch() {
+      if (searchInput) searchInput.value = '';
+      if (clearSearchBtn) clearSearchBtn.classList.add('hidden');
+      if (searchFilterHeader) searchFilterHeader.classList.add('hidden');
+      navigateTo('home');
+    }
+
+
+    /* ==================== 8. FITUR NIGHT & LIGHT MODE TOGGLE ==================== */
+    /**
+     * Syarat Mutlak 4:
+     * Tombol tema di navbar atas berfungsi nyata saat diklik untuk mengubah tema warna website secara total
+     * (Dark Mode elegan #0b0b0e <-> Light Mode bersih #f8fafc).
+     */
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const appBody = document.getElementById('appBody');
+
+    if (themeToggleBtn) {
+      themeToggleBtn.addEventListener('click', () => {
+        isNightMode = !isNightMode;
+        
+        if (isNightMode) {
+          // Beralih ke Dark Mode #0b0b0e
+          document.documentElement.classList.add('dark');
+          appBody.style.backgroundColor = '#0b0b0e';
+          appBody.style.color = '#f1f5f9';
+          themeIcon.setAttribute('data-lucide', 'moon');
+          themeIcon.classList.remove('text-amber-500');
+          themeIcon.classList.add('text-cyan-400');
+          showToast('Dark Mode Activated (#0b0b0e)');
+        } else {
+          // Beralih ke Light Mode #f8fafc
+          document.documentElement.classList.remove('dark');
+          appBody.style.backgroundColor = '#f8fafc';
+          appBody.style.color = '#0f172a';
+          themeIcon.setAttribute('data-lucide', 'sun');
+          themeIcon.classList.remove('text-cyan-400');
+          themeIcon.classList.add('text-amber-500');
+          showToast('Light Mode Activated (#f8fafc)');
+        }
+
+        if (window.lucide) lucide.createIcons();
+      });
+    }
+
+
+    /* ==================== 9. INTERAKTIF TAMBAHAN (TOAST, WATCHLIST, NOTIF) ==================== */
+    /**
+     * Syarat Mutlak 5:
+     * Tombol notifikasi, tombol add to list (+), dan tombol interaktif lainnya
+     * memunculkan animasi dan toast notification interaktif.
+     */
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = 'pointer-events-auto flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#1c1c2b] border border-cyan-400/40 text-slate-100 text-xs font-semibold shadow-2xl shadow-cyan-500/20 translate-y-4 opacity-0 transition-all duration-300';
+      toast.innerHTML = `
+        <div class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+        <span>${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-4', 'opacity-0');
+      }, 10);
+
+      setTimeout(() => {
+        toast.classList.add('translate-y-4', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function toggleWatchlist(movieTitle) {
+      const index = userWatchlist.indexOf(movieTitle);
+      if (index > -1) {
+        userWatchlist.splice(index, 1);
+        showToast(`Removed "${movieTitle}" from your Watch List`);
+      } else {
+        userWatchlist.push(movieTitle);
+        showToast(`Saved "${movieTitle}" to your Watch List (+)`);
+      }
+
+      updateWatchlistBadge();
+
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function updateWatchlistBadge() {
+      const badge = document.getElementById('watchlistBadgeCount');
+      if (badge) {
+        badge.textContent = userWatchlist.length;
+      }
+    }
+
+    // Toggle dropdown notifikasi
+    const notifBellBtn = document.getElementById('notifBellBtn');
+    const notifDropdown = document.getElementById('notifDropdown');
+    if (notifBellBtn && notifDropdown) {
+      notifBellBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        notifDropdown.classList.toggle('hidden');
+      });
+      document.addEventListener('click', (e) => {
+        if (!notifDropdown.contains(e.target)) {
+          notifDropdown.classList.add('hidden');
+        }
+      });
+    }
+
+    // Login simulator
+    function handleLoginClick() {
+      isLoggedIn = !isLoggedIn;
+      const statusText = document.getElementById('userStatusText');
+      if (statusText) {
+        statusText.textContent = isLoggedIn ? 'VIP User' : 'Log in';
+      }
+      showToast(isLoggedIn ? 'Welcome back! VIP Cloud Session Active' : 'Logged out successfully');
+    }
+
+    // Scroll horizontal movie rail
+    function scrollRail(elementId, distance) {
+      const el = document.getElementById(elementId);
+      if (el) {
+        el.scrollBy({ left: distance, behavior: 'smooth' });
+      }
+    }
+
+    // Hero carousel switcher
+    const HERO_PREVIEWS = [
+      {
+        title: "Take Charge of My Heart",
+        desc: "When a high-powered tech prodigy accidentally syncs her neural bio-tracker with a spirited cafe musician, their emotions become intertwined across Seoul. Every heartbeat sparks electric destiny.",
+        img: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1920&q=80"
+      },
+      {
+        title: "Bound by Promise",
+        desc: "Two childhood friends on opposing sides of the legal system confront a family debt that could destroy the city council.",
+        img: "https://images.unsplash.com/photo-1509281373149-e957c6296406?auto=format&fit=crop&w=1920&q=80"
+      },
+      {
+        title: "Black Clover: Kingdom War",
+        desc: "Asta and the Black Bulls take the frontline against an ancient demonic uprising as the Magic Knights unite for their final stand.",
+        img: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&w=1920&q=80"
+      },
+      {
+        title: "Spider-Man: Beyond Dimensions",
+        desc: "Multiversal anomalies converge onto Manhattan, testing web-slingers from disparate eras to reconstruct the timeline.",
+        img: "https://images.unsplash.com/photo-1635805737707-575885ab0820?auto=format&fit=crop&w=1920&q=80"
+      }
+    ];
+
+    function switchHero(index) {
+      const hero = HERO_PREVIEWS[index % HERO_PREVIEWS.length];
+      const heroTitle = document.getElementById('heroTitle');
+      const heroDesc = document.getElementById('heroDescription');
+      const heroImg = document.getElementById('heroImage');
+      if (heroTitle) heroTitle.textContent = hero.title;
+      if (heroDesc) heroDesc.textContent = hero.desc;
+      if (heroImg) heroImg.src = hero.img;
+      showToast(`Featured: ${hero.title}`);
+    }
+
+    // Sidebar Mobile Toggle
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+    const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+    if (sidebarToggleBtn && sidebar) {
+      sidebarToggleBtn.addEventListener('click', () => {
+        const isClosed = sidebar.classList.contains('-translate-x-full');
+        if (isClosed) {
+          sidebar.classList.remove('-translate-x-full');
+          if (sidebarBackdrop) sidebarBackdrop.classList.remove('hidden');
+        } else {
+          closeMobileSidebar();
+        }
+      });
+    }
+
+    if (sidebarBackdrop) {
+      sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+    }
+
+    function closeMobileSidebar() {
+      if (sidebar) sidebar.classList.add('-translate-x-full');
+      if (sidebarBackdrop) sidebarBackdrop.classList.add('hidden');
+    }
+
+    // Language Selector simulator
+    const langSelectBtn = document.getElementById('langSelectBtn');
+    const currentLangLabel = document.getElementById('currentLangLabel');
+    const LANGUAGES = ['ENGLISH', 'INDONESIA', 'ESPAÑOL', '日本語', '한국어'];
+    let langIndex = 0;
+
+    if (langSelectBtn && currentLangLabel) {
+      langSelectBtn.addEventListener('click', () => {
+        langIndex = (langIndex + 1) % LANGUAGES.length;
+        currentLangLabel.textContent = LANGUAGES[langIndex];
+        showToast(`Interface language: ${LANGUAGES[langIndex]}`);
+      });
+    }
+
+    /* Inisialisasi awal saat dokumen siap */
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeContent();
+    });
+  </script>
+</body>
+</html>
